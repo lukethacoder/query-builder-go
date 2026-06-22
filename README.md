@@ -10,7 +10,7 @@ Go implementation of the [Query Builder specification](https://github.com/luketh
 go get github.com/lukethacoder/query-builder-go
 ```
 
-Requires Go 1.21 or later.
+Requires Go 1.23 or later.
 
 ## Usage
 
