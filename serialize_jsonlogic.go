@@ -92,6 +92,8 @@ func ruleToJSONLogic(r *Rule) map[string]any {
 		return map[string]any{"endsWith": []any{f, sv}}
 	case "doesNotEndWith":
 		return map[string]any{"!": map[string]any{"endsWith": []any{f, sv}}}
+	case "matchesRegex":
+		return map[string]any{"matchesRegex": []any{f, sv}}
 	}
 
 	return map[string]any{"==": []any{f, val}}

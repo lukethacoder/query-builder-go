@@ -71,6 +71,13 @@ var TernaryOperators = map[string]bool{
 	"between": true, "notBetween": true,
 }
 
+// CustomOperators contains well-known custom operators defined in §2.9.
+// These are not part of DefaultOperators and must be explicitly included in a
+// builder's or field's operator list to be available.
+var CustomOperators = []Operator{
+	{FullOption: FullOption{Name: "matchesRegex", Value: "matchesRegex", Label: "matches regex"}, Arity: "binary"},
+}
+
 // PlaceholderName is the sentinel value used for incomplete field/operator/value
 // slots (§2.8).
 const PlaceholderName = "~"

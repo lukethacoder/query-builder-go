@@ -96,6 +96,8 @@ func ruleToMongo(r *Rule) map[string]any {
 		return map[string]any{field: map[string]any{"$regex": sv + "$"}}
 	case "doesNotEndWith":
 		return map[string]any{field: map[string]any{"$not": map[string]any{"$regex": sv + "$"}}}
+	case "matchesRegex":
+		return map[string]any{field: map[string]any{"$regex": sv}}
 	}
 
 	return map[string]any{field: val}

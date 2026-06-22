@@ -548,6 +548,63 @@ func TestDefaultOperators(t *testing.T) {
 	}
 }
 
+func TestCustomOperators_matchesRegex(t *testing.T) {
+	found := false
+	for _, op := range qb.CustomOperators {
+		if op.Name == "matchesRegex" {
+			found = true
+			if op.Arity != "binary" {
+				t.Errorf("matchesRegex arity: expected binary, got %v", op.Arity)
+			}
+		}
+	}
+	if !found {
+		t.Error("matchesRegex not found in CustomOperators")
+	}
+}
+
+func TestFormatSQL_matchesRegex(t *testing.T) {
+	q := newGroup("and", newRule("notes", "matchesRegex", `^\d+$`))
+	sql := qb.FormatSQL(q, qb.SqlExportOptions{})
+	if !strings.Contains(sql, "REGEXP") {
+		t.Errorf("expected REGEXP in SQL, got: %s", sql)
+	}
+	if !strings.Contains(sql, `^\d+$`) {
+		t.Errorf("expected pattern in SQL, got: %s", sql)
+	}
+}
+
+func TestFormatParameterized_matchesRegex(t *testing.T) {
+	q := newGroup("and", newRule("notes", "matchesRegex", `^\d+$`))
+	result := qb.FormatParameterized(q, qb.ParameterizedExportOptions{})
+	if !strings.Contains(result.SQL, "REGEXP") {
+		t.Errorf("expected REGEXP in parameterized SQL, got: %s", result.SQL)
+	}
+	if len(result.Params) != 1 {
+		t.Errorf("expected 1 param, got %d", len(result.Params))
+	}
+}
+
+func TestFormatMongoDBQuery_matchesRegex(t *testing.T) {
+	q := newGroup("and", newRule("notes", "matchesRegex", `^\d+$`))
+	doc := qb.FormatMongoDBQuery(q, qb.CommonExportOptions{})
+	b, _ := json.Marshal(doc)
+	s := string(b)
+	if !strings.Contains(s, `$regex`) {
+		t.Errorf("expected $regex in mongo doc, got: %s", s)
+	}
+}
+
+func TestFormatJSONLogic_matchesRegex(t *testing.T) {
+	q := newGroup("and", newRule("notes", "matchesRegex", `^\d+$`))
+	doc := qb.FormatJSONLogic(q, qb.CommonExportOptions{})
+	b, _ := json.Marshal(doc)
+	s := string(b)
+	if !strings.Contains(s, "matchesRegex") {
+		t.Errorf("expected matchesRegex key in jsonlogic, got: %s", s)
+	}
+}
+
 func TestOperatorNegationMap(t *testing.T) {
 	if qb.OperatorNegationMap["="] != "!=" {
 		t.Error("negation of = should be !=")

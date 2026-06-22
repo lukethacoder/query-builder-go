@@ -211,6 +211,10 @@ func ruleToSQL(r *Rule, opts SqlExportOptions) string {
 		return fmt.Sprintf("%s %s %s", qf, sqlOp, quoteValueSQL(pattern, opts))
 	}
 
+	if op == "matchesRegex" {
+		return fmt.Sprintf("%s REGEXP %s", qf, quoteValueSQL(fmt.Sprintf("%v", val), opts))
+	}
+
 	return fmt.Sprintf("%s %s %s", qf, op, emitValueSQL(val, opts))
 }
 
@@ -442,6 +446,11 @@ func ruleToSQLParam(r *Rule, opts ParameterizedExportOptions, arrParams *[]any, 
 		}
 		ph := addParam(pattern, r.Field, opts, arrParams, namedParams, counts)
 		return fmt.Sprintf("%s %s %s", qf, sqlOp, ph)
+	}
+
+	if op == "matchesRegex" {
+		ph := addParam(val, r.Field, opts, arrParams, namedParams, counts)
+		return fmt.Sprintf("%s REGEXP %s", qf, ph)
 	}
 
 	ph := addParam(val, r.Field, opts, arrParams, namedParams, counts)
